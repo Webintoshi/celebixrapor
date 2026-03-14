@@ -1,28 +1,28 @@
-import DOMPurify from "isomorphic-dompurify";
-
-const FORBIDDEN_TAGS = ["script", "iframe", "object", "embed"];
-let hooksInstalled = false;
-
-function getPurifier() {
-  if (!hooksInstalled) {
-    DOMPurify.addHook("uponSanitizeAttribute", (_, data) => {
-      if (data.attrName && data.attrName.toLowerCase().startsWith("on")) {
-        data.keepAttr = false;
-      }
-    });
-
-    hooksInstalled = true;
-  }
-
-  return DOMPurify;
-}
+const FORBIDDEN_BLOCK_TAGS = ["script", "iframe", "object", "embed"];
+const EVENT_HANDLER_PATTERN = /\s+on[a-z-]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
+const JAVASCRIPT_URL_PATTERN =
+  /\s+(href|src|xlink:href|formaction)\s*=\s*(?:"\s*(?:javascript|vbscript|data):[^"]*"|'\s*(?:javascript|vbscript|data):[^']*'|(?:javascript|vbscript|data):[^\s>]+)/gi;
+const SRCDOC_PATTERN = /\s+srcdoc\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
 
 export function sanitizeHtmlMarkup(input: string): string {
-  return getPurifier().sanitize(input, {
-    FORBID_TAGS: FORBIDDEN_TAGS,
-    KEEP_CONTENT: true,
-    RETURN_TRUSTED_TYPE: false,
-  });
+  let sanitized = input;
+
+  for (const tag of FORBIDDEN_BLOCK_TAGS) {
+    const blockPattern = new RegExp(
+      `<${tag}\\b[^>]*>[\\s\\S]*?<\\/${tag}\\s*>`,
+      "gi",
+    );
+    const selfClosingPattern = new RegExp(`<${tag}\\b[^>]*\\/?>`, "gi");
+
+    sanitized = sanitized.replace(blockPattern, "");
+    sanitized = sanitized.replace(selfClosingPattern, "");
+  }
+
+  sanitized = sanitized.replace(EVENT_HANDLER_PATTERN, "");
+  sanitized = sanitized.replace(JAVASCRIPT_URL_PATTERN, " $1=\"#\"");
+  sanitized = sanitized.replace(SRCDOC_PATTERN, "");
+
+  return sanitized.trim();
 }
 
 export function normalizeHtmlDocument(html: string): string {

@@ -14,9 +14,6 @@ importers:
       ioredis:
         specifier: ^5.10.0
         version: 5.10.0
-      isomorphic-dompurify:
-        specifier: ^3.3.0
-        version: 3.3.0
       next:
         specifier: 16.1.6
         version: 16.1.6(@babel/core@7.29.0)(@playwright/test@1.58.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -1285,9 +1282,6 @@ packages:
   dompurify@3.2.7:
     resolution: {integrity: sha512-WhL/YuveyGXJaerVlMYGWhvQswa7myDG17P7Vu65EWC05o8vfeNbvNf4d/BOvH99+ZW+LlQsc1GDKMa1vNK6dw==}
 
-  dompurify@3.3.3:
-    resolution: {integrity: sha512-Oj6pzI2+RqBfFG+qOaOLbFXLQ90ARpcGG6UePL82bJLtdsa6CYJD7nmiU8MW9nQNOtCHV3lZ/Bzq1X0QYbBZCA==}
-
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
     engines: {node: '>= 0.4'}
@@ -1781,10 +1775,6 @@ packages:
 
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
-
-  isomorphic-dompurify@3.3.0:
-    resolution: {integrity: sha512-Xx3GlNZNAXIISX49OMpfNgxrRU49KVQ5hqnK2zbkqkPucdWnCZXquTMK/COnb8pmIOJlfiaNYav9qyHX3gRDMA==}
-    engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
 
   istanbul-lib-coverage@3.2.2:
     resolution: {integrity: sha512-O8dpsF+r0WV/8MNRKfnmrtCWhuKjxrq2w+jpzBL5UZKTi2LeVWnWOmWRxFlesJONmc+wLAGvKQZEOanko0LFTg==}
@@ -3840,10 +3830,6 @@ snapshots:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
 
-  dompurify@3.3.3:
-    optionalDependencies:
-      '@types/trusted-types': 2.0.7
-
   dunder-proto@1.0.1:
     dependencies:
       call-bind-apply-helpers: 1.0.2
@@ -4498,15 +4484,6 @@ snapshots:
   isarray@2.0.5: {}
 
   isexe@2.0.0: {}
-
-  isomorphic-dompurify@3.3.0:
-    dependencies:
-      dompurify: 3.3.3
-      jsdom: 28.1.0
-    transitivePeerDependencies:
-      - '@noble/hashes'
-      - canvas
-      - supports-color
 
   istanbul-lib-coverage@3.2.2: {}
 
