@@ -6,7 +6,7 @@ Turkce odakli, premium tasarimli bir Next.js uygulamasi. Kullanici HTML yapistir
 
 - HTML editor + canli sanitize onizleme
 - Public URL to PDF akisi
-- Browserless PDF proxy entegrasyonu
+- Gomulu Chromium PDF renderer
 - IP bazli rate-limit ve aktif donusum kilidi
 - Docker ve Render deployment dosyalari
 - Vitest ve Playwright testleri
@@ -18,6 +18,7 @@ Turkce odakli, premium tasarimli bir Next.js uygulamasi. Kullanici HTML yapistir
 - TypeScript
 - Tailwind CSS v4
 - Monaco Editor
+- Playwright Chromium
 - Zod
 - ioredis
 
@@ -37,7 +38,6 @@ cp .env.example .env.local
 
 3. Gerekli degiskenleri doldurun:
 
-- `BROWSERLESS_TOKEN`
 - `REDIS_URL`
 
 4. Uygulamayi baslatin:
@@ -90,4 +90,4 @@ Health-check ve konfigurasyon durumu dondurur.
 - Render blueprint: [render.yaml](./render.yaml)
 - Env ornegi: [.env.example](./.env.example)
 
-Render uzerinde bir web service ve bir key-value instance ile calisacak sekilde hazirlanmistir.
+Render uzerinde bir web service ve bir key-value instance ile calisacak sekilde hazirlanmistir. PDF motoru uygulama icine gomuludur; ayri bir harici render servisi gerekmez.

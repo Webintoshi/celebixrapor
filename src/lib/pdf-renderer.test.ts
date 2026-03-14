@@ -2,12 +2,12 @@ import { describe, expect, it } from "vitest";
 
 import {
   makeDownloadFilename,
-  mapPdfOptionsToBrowserless,
-} from "@/lib/browserless";
+  mapPdfOptionsToRenderer,
+} from "@/lib/pdf-renderer";
 
-describe("mapPdfOptionsToBrowserless", () => {
-  it("maps public API options to browserless payload", () => {
-    const mapped = mapPdfOptionsToBrowserless({
+describe("mapPdfOptionsToRenderer", () => {
+  it("maps public API options to playwright pdf options", () => {
+    const mapped = mapPdfOptionsToRenderer({
       format: "A4",
       orientation: "landscape",
       marginMm: 18,

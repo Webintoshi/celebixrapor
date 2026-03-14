@@ -46,9 +46,7 @@ export const DEFAULT_PDF_OPTIONS: PdfOptionsInput = {
 export const PDF_RATE_LIMIT = 6;
 export const PDF_RATE_WINDOW_MS = 10 * 60 * 1000;
 export const ACTIVE_CONVERSION_TTL_MS = 45 * 1000;
-export const BROWSERLESS_NAVIGATION_TIMEOUT_MS = 25 * 1000;
-export const BROWSERLESS_REQUEST_TIMEOUT_MS = 40 * 1000;
+export const PDF_NAVIGATION_TIMEOUT_MS = 25 * 1000;
+export const PDF_RENDER_TIMEOUT_MS = 40 * 1000;
 export const MAX_HTML_LENGTH = 200_000;
 export const MAX_URL_LENGTH = 2_048;
-export const DEFAULT_BROWSERLESS_ENDPOINT =
-  "https://production-sfo.browserless.io/pdf";

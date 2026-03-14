@@ -283,9 +283,9 @@ export function PdfStudio() {
                   />
                 </label>
                 <div className="rounded-[1.5rem] border border-[var(--line)] bg-white/65 p-5 text-sm leading-7 text-[var(--ink-soft)]">
-                  URL modu, Browserless uzerinden sayfayi render edip PDF akisini
-                  stream eder. Giris gerektiren veya private agdaki sayfalar v1
-                  kapsaminda degildir.
+                  URL modu, sunucu icindeki Chromium renderer ile sayfayi isleyip
+                  PDF akisini hazirlar. Giris gerektiren veya private agdaki
+                  sayfalar v1 kapsaminda degildir.
                 </div>
               </div>
             )}

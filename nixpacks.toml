@@ -1,5 +1,5 @@
 [phases.install]
-cmds = ["pnpm install --frozen-lockfile"]
+cmds = ["pnpm install --frozen-lockfile", "pnpm exec playwright install chromium --with-deps"]
 
 [phases.build]
 cmds = ["pnpm build"]

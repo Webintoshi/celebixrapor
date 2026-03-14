@@ -3,16 +3,13 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 export async function GET() {
-  const isConfigured = Boolean(
-    process.env.BROWSERLESS_TOKEN && process.env.REDIS_URL,
-  );
-
   return NextResponse.json(
     {
-      status: isConfigured ? "ok" : "degraded",
+      status: "ok",
       services: {
-        browserless: Boolean(process.env.BROWSERLESS_TOKEN),
         redis: Boolean(process.env.REDIS_URL),
+        renderer: "embedded-chromium",
+        rateLimitStore: process.env.REDIS_URL ? "redis" : "memory",
       },
     },
     {

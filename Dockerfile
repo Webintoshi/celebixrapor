@@ -1,4 +1,4 @@
-FROM node:20-bookworm-slim AS base
+FROM mcr.microsoft.com/playwright:v1.58.0-noble AS base
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PNPM_HOME="/pnpm"

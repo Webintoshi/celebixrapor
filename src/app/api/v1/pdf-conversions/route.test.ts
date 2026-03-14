@@ -1,7 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { POST } from "@/app/api/v1/pdf-conversions/route";
+import { HttpError } from "@/lib/api-error";
 import { DEFAULT_PDF_OPTIONS } from "@/lib/pdf-contract";
+import * as pdfRenderer from "@/lib/pdf-renderer";
 import { resetRateLimitStoreForTests } from "@/lib/rate-limit";
 
 const SAMPLE_PDF = Buffer.from(
@@ -10,7 +12,6 @@ const SAMPLE_PDF = Buffer.from(
 
 describe("POST /api/v1/pdf-conversions", () => {
   beforeEach(() => {
-    process.env.BROWSERLESS_TOKEN = "browserless-token";
     delete process.env.REDIS_URL;
     resetRateLimitStoreForTests();
     vi.restoreAllMocks();
@@ -21,16 +22,9 @@ describe("POST /api/v1/pdf-conversions", () => {
   });
 
   it("streams a PDF for sanitized HTML input", async () => {
-    const fetchMock = vi.fn(async () => {
-      return new Response(SAMPLE_PDF, {
-        status: 200,
-        headers: {
-          "Content-Type": "application/pdf",
-        },
-      });
-    });
-
-    vi.stubGlobal("fetch", fetchMock);
+    const renderPdfMock = vi
+      .spyOn(pdfRenderer, "renderPdf")
+      .mockResolvedValue(SAMPLE_PDF);
 
     const response = await POST(
       makeRequest({
@@ -44,26 +38,21 @@ describe("POST /api/v1/pdf-conversions", () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get("Content-Type")).toBe("application/pdf");
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(renderPdfMock).toHaveBeenCalledTimes(1);
+    await expect(response.arrayBuffer()).resolves.toBeTruthy();
 
-    const [, init] = fetchMock.mock.calls[0] ?? [];
-    const payload = JSON.parse(String(init?.body)) as { html?: string };
-
-    expect(payload.html).toContain("<h1>Merhaba</h1>");
-    expect(payload.html).not.toContain("onclick");
+    const [{ source }] = renderPdfMock.mock.calls[0] ?? [];
+    expect(source).toMatchObject({
+      type: "html",
+      html: expect.stringContaining("<h1>Merhaba</h1>"),
+    });
+    expect(source).not.toMatchObject({
+      html: expect.stringContaining("onclick"),
+    });
   });
 
   it("returns 429 after the anonymous limit is exceeded", async () => {
-    const fetchMock = vi.fn(async () => {
-      return new Response(SAMPLE_PDF, {
-        status: 200,
-        headers: {
-          "Content-Type": "application/pdf",
-        },
-      });
-    });
-
-    vi.stubGlobal("fetch", fetchMock);
+    vi.spyOn(pdfRenderer, "renderPdf").mockResolvedValue(SAMPLE_PDF);
 
     for (let index = 0; index < 6; index += 1) {
       const response = await POST(
@@ -99,17 +88,14 @@ describe("POST /api/v1/pdf-conversions", () => {
     expect(blocked.headers.get("Retry-After")).toBeTruthy();
   });
 
-  it("maps browserless server errors to a temporary unavailability response", async () => {
-    const fetchMock = vi.fn(async () => {
-      return new Response("busy", {
-        status: 503,
-        headers: {
-          "Content-Type": "text/plain",
-        },
-      });
-    });
-
-    vi.stubGlobal("fetch", fetchMock);
+  it("maps renderer startup errors to a temporary unavailability response", async () => {
+    vi.spyOn(pdfRenderer, "renderPdf").mockRejectedValue(
+      new HttpError(
+        503,
+        "pdf_engine_unavailable",
+        "PDF motoru su an baslatilamiyor.",
+      ),
+    );
 
     const response = await POST(
       makeRequest({
@@ -124,7 +110,7 @@ describe("POST /api/v1/pdf-conversions", () => {
     expect(response.status).toBe(503);
     await expect(response.json()).resolves.toMatchObject({
       error: {
-        code: "upstream_busy",
+        code: "pdf_engine_unavailable",
       },
     });
   });

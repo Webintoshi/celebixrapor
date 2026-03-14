@@ -1,8 +1,8 @@
 import { HttpError, toErrorResponse, zodIssuesToDetails } from "@/lib/api-error";
 import {
   makeDownloadFilename,
-  requestBrowserlessPdf,
-} from "@/lib/browserless";
+  renderPdf,
+} from "@/lib/pdf-renderer";
 import { getClientIp } from "@/lib/request-context";
 import { getRateLimitStore } from "@/lib/rate-limit";
 import { pdfConversionSchema } from "@/lib/schemas";
@@ -75,10 +75,9 @@ export async function handlePdfConversionRequest(request: Request) {
         ? buildHtmlSource(parsed.data.source.html)
         : await buildUrlSource(parsed.data.source.url);
 
-    const upstream = await requestBrowserlessPdf({
+    const pdf = await renderPdf({
       source,
       options: parsed.data.options,
-      requestId,
     });
 
     const headers = new Headers(baseHeaders);
@@ -90,7 +89,7 @@ export async function handlePdfConversionRequest(request: Request) {
     headers.set("Cache-Control", "no-store");
     headers.set("X-Request-Id", requestId);
 
-    return new Response(upstream.body, {
+    return new Response(Buffer.from(pdf), {
       status: 200,
       headers,
     });
