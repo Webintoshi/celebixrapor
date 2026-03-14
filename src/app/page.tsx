@@ -9,7 +9,7 @@ const metrics = [
 const highlights = [
   {
     title: "Guvenli donusum kontrati",
-    body: "Public URL denetimi, private adres engellemesi, Turnstile ve IP bazli rate-limit ile gereksiz risk almaz.",
+    body: "Public URL denetimi, private adres engellemesi ve IP bazli rate-limit ile gereksiz risk almaz.",
   },
   {
     title: "Premium arayuz",
@@ -180,8 +180,8 @@ export default function Home() {
       <footer className="mx-auto flex max-w-7xl flex-col gap-2 px-6 pb-12 pt-4 text-sm text-[var(--ink-soft)] sm:px-8 lg:px-12">
         <div className="font-semibold text-[var(--ink)]">Premium HTML to PDF</div>
         <div>
-          Browserless, Turnstile ve Render odakli mimari ile canli ortam icin
-          hazirlanan tek ekran premium donusum uygulamasi.
+          Browserless ve Render odakli mimari ile canli ortam icin hazirlanan
+          tek ekran premium donusum uygulamasi.
         </div>
       </footer>
     </main>

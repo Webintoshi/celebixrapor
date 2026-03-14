@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { POST } from "@/app/api/v1/pdf-conversions/route";
-import { DEFAULT_PDF_OPTIONS, DEV_TURNSTILE_BYPASS_TOKEN } from "@/lib/pdf-contract";
+import { DEFAULT_PDF_OPTIONS } from "@/lib/pdf-contract";
 import { resetRateLimitStoreForTests } from "@/lib/rate-limit";
 
 const SAMPLE_PDF = Buffer.from(
@@ -12,7 +12,6 @@ describe("POST /api/v1/pdf-conversions", () => {
   beforeEach(() => {
     process.env.BROWSERLESS_TOKEN = "browserless-token";
     delete process.env.REDIS_URL;
-    delete process.env.TURNSTILE_SECRET_KEY;
     resetRateLimitStoreForTests();
     vi.restoreAllMocks();
   });
@@ -40,7 +39,6 @@ describe("POST /api/v1/pdf-conversions", () => {
           html: '<div onclick="alert(1)"><h1>Merhaba</h1></div>',
         },
         options: DEFAULT_PDF_OPTIONS,
-        turnstileToken: DEV_TURNSTILE_BYPASS_TOKEN,
       }),
     );
 
@@ -53,39 +51,6 @@ describe("POST /api/v1/pdf-conversions", () => {
 
     expect(payload.html).toContain("<h1>Merhaba</h1>");
     expect(payload.html).not.toContain("onclick");
-  });
-
-  it("fails when turnstile verification is rejected", async () => {
-    process.env.TURNSTILE_SECRET_KEY = "secret";
-
-    const fetchMock = vi.fn(async () => {
-      return new Response(JSON.stringify({ success: false }), {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-    });
-
-    vi.stubGlobal("fetch", fetchMock);
-
-    const response = await POST(
-      makeRequest({
-        source: {
-          type: "html",
-          html: "<h1>Blocked</h1>",
-        },
-        options: DEFAULT_PDF_OPTIONS,
-        turnstileToken: "bad-token",
-      }),
-    );
-
-    expect(response.status).toBe(422);
-    await expect(response.json()).resolves.toMatchObject({
-      error: {
-        code: "turnstile_validation_failed",
-      },
-    });
   });
 
   it("returns 429 after the anonymous limit is exceeded", async () => {
@@ -109,7 +74,6 @@ describe("POST /api/v1/pdf-conversions", () => {
               html: `<h1>Run ${index}</h1>`,
             },
             options: DEFAULT_PDF_OPTIONS,
-            turnstileToken: DEV_TURNSTILE_BYPASS_TOKEN,
           },
           "203.0.113.15",
         ),
@@ -126,7 +90,6 @@ describe("POST /api/v1/pdf-conversions", () => {
             html: "<h1>Blocked</h1>",
           },
           options: DEFAULT_PDF_OPTIONS,
-          turnstileToken: DEV_TURNSTILE_BYPASS_TOKEN,
         },
         "203.0.113.15",
       ),
@@ -155,7 +118,6 @@ describe("POST /api/v1/pdf-conversions", () => {
           html: "<h1>Busy</h1>",
         },
         options: DEFAULT_PDF_OPTIONS,
-        turnstileToken: DEV_TURNSTILE_BYPASS_TOKEN,
       }),
     );
 

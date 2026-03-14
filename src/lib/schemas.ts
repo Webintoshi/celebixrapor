@@ -63,9 +63,4 @@ export const pdfOptionsSchema = z
 export const pdfConversionSchema = z.strictObject({
   source: z.discriminatedUnion("type", [htmlSourceSchema, urlSourceSchema]),
   options: pdfOptionsSchema,
-  turnstileToken: z
-    .string()
-    .trim()
-    .min(1, "Dogrulama zorunludur.")
-    .max(2048, "Dogrulama belirteci cok uzun."),
 });

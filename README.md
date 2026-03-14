@@ -7,7 +7,6 @@ Turkce odakli, premium tasarimli bir Next.js uygulamasi. Kullanici HTML yapistir
 - HTML editor + canli sanitize onizleme
 - Public URL to PDF akisi
 - Browserless PDF proxy entegrasyonu
-- Cloudflare Turnstile dogrulamasi
 - IP bazli rate-limit ve aktif donusum kilidi
 - Docker ve Render deployment dosyalari
 - Vitest ve Playwright testleri
@@ -38,12 +37,8 @@ cp .env.example .env.local
 
 3. Gerekli degiskenleri doldurun:
 
-- `NEXT_PUBLIC_TURNSTILE_SITE_KEY`
-- `TURNSTILE_SECRET_KEY`
 - `BROWSERLESS_TOKEN`
 - `REDIS_URL`
-
-Not: Turnstile secret yoksa gelistirme modunda local bypass aktif kalir.
 
 4. Uygulamayi baslatin:
 
@@ -81,8 +76,7 @@ Istek govdesi:
     "printBackground": true,
     "preferCssPageSize": false,
     "scale": 1
-  },
-  "turnstileToken": "token"
+  }
 }
 ```
 

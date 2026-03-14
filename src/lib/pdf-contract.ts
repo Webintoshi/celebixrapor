@@ -26,7 +26,6 @@ export type PdfSourceInput =
 export interface PdfConversionRequest {
   source: PdfSourceInput;
   options: PdfOptionsInput;
-  turnstileToken: string;
 }
 
 export interface ApiFieldError {
@@ -53,4 +52,3 @@ export const MAX_HTML_LENGTH = 200_000;
 export const MAX_URL_LENGTH = 2_048;
 export const DEFAULT_BROWSERLESS_ENDPOINT =
   "https://production-sfo.browserless.io/pdf";
-export const DEV_TURNSTILE_BYPASS_TOKEN = "dev-bypass-token";

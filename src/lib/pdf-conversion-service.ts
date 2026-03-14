@@ -7,7 +7,6 @@ import { getClientIp } from "@/lib/request-context";
 import { getRateLimitStore } from "@/lib/rate-limit";
 import { pdfConversionSchema } from "@/lib/schemas";
 import { normalizeHtmlDocument, sanitizeHtmlMarkup } from "@/lib/sanitize";
-import { verifyTurnstileToken } from "@/lib/turnstile";
 import { assertPublicHttpUrl } from "@/lib/url-safety";
 
 export async function handlePdfConversionRequest(request: Request) {
@@ -53,11 +52,6 @@ export async function handlePdfConversionRequest(request: Request) {
         },
       );
     }
-
-    await verifyTurnstileToken({
-      token: parsed.data.turnstileToken,
-      ip: clientIp,
-    });
 
     const activeLock = await rateLimitStore.acquireActive(clientIp, requestId);
 

@@ -1,12 +1,10 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { startTransition, useDeferredValue, useEffect, useId, useState } from "react";
+import { startTransition, useDeferredValue, useId, useState } from "react";
 
-import { TurnstileWidget } from "@/components/turnstile-widget";
 import {
   DEFAULT_PDF_OPTIONS,
-  DEV_TURNSTILE_BYPASS_TOKEN,
   type PdfConversionRequest,
   type PdfOptionsInput,
 } from "@/lib/pdf-contract";
@@ -34,10 +32,6 @@ export function PdfStudio() {
     htmlTemplates[0].id,
   );
   const [options, setOptions] = useState<PdfOptionsInput>(DEFAULT_PDF_OPTIONS);
-  const [turnstileToken, setTurnstileToken] = useState(
-    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? "" : DEV_TURNSTILE_BYPASS_TOKEN,
-  );
-  const [turnstileResetNonce, setTurnstileResetNonce] = useState(0);
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
@@ -45,12 +39,6 @@ export function PdfStudio() {
   const [downloadCount, setDownloadCount] = useState(0);
   const advancedSectionId = useId();
   const deferredHtml = useDeferredValue(htmlValue);
-
-  useEffect(() => {
-    if (!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
-      setTurnstileToken(DEV_TURNSTILE_BYPASS_TOKEN);
-    }
-  }, []);
 
   const previewDocument =
     mode === "html"
@@ -66,11 +54,6 @@ export function PdfStudio() {
     setNotice(null);
     setError(null);
 
-    if (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && !turnstileToken) {
-      setError("Lutfen once insan dogrulamasini tamamlayin.");
-      return;
-    }
-
     setIsSubmitting(true);
 
     const payload: PdfConversionRequest = {
@@ -85,7 +68,6 @@ export function PdfStudio() {
               url: urlValue,
             },
       options,
-      turnstileToken: turnstileToken || DEV_TURNSTILE_BYPASS_TOKEN,
     };
 
     try {
@@ -131,11 +113,6 @@ export function PdfStudio() {
       );
     } finally {
       setIsSubmitting(false);
-      setTurnstileResetNonce((current) => current + 1);
-
-      if (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
-        setTurnstileToken("");
-      }
     }
   }
 
@@ -452,17 +429,7 @@ export function PdfStudio() {
               ) : null}
             </div>
 
-            <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
-              <div className="space-y-3">
-                <div className="text-sm font-semibold text-[var(--ink)]">
-                  Insan dogrulamasi
-                </div>
-                <TurnstileWidget
-                  resetNonce={turnstileResetNonce}
-                  onTokenChange={setTurnstileToken}
-                />
-              </div>
-
+            <div className="flex justify-end">
               <button
                 data-testid="submit-button"
                 type="submit"

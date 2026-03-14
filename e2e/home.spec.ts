@@ -76,5 +76,5 @@ test("mobile viewport keeps the primary action visible", async ({ page }) => {
   await page.goto("/");
 
   await expect(page.getByTestId("submit-button")).toBeVisible();
-  await expect(page.getByText("Gelistirme modu aktif")).toBeVisible();
+  await expect(page.getByText("Gelismis PDF ayarlari")).toBeVisible();
 });
