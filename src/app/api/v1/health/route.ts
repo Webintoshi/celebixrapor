@@ -10,12 +10,9 @@ export async function GET() {
       process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
   );
 
-  const statusCode =
-    isConfigured || process.env.NODE_ENV !== "production" ? 200 : 503;
-
   return NextResponse.json(
     {
-      status: statusCode === 200 ? "ok" : "degraded",
+      status: isConfigured ? "ok" : "degraded",
       services: {
         browserless: Boolean(process.env.BROWSERLESS_TOKEN),
         redis: Boolean(process.env.REDIS_URL),
@@ -24,7 +21,7 @@ export async function GET() {
       },
     },
     {
-      status: statusCode,
+      status: 200,
       headers: {
         "Cache-Control": "no-store",
       },
