@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: premium-html-to-pdf
+    env: docker
+    plan: starter
+    autoDeploy: true
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false
+      - key: NEXT_PUBLIC_TURNSTILE_SITE_KEY
+        sync: false
+      - key: TURNSTILE_SECRET_KEY
+        sync: false
+      - key: BROWSERLESS_ENDPOINT
+        value: https://production-sfo.browserless.io/pdf
+      - key: BROWSERLESS_TOKEN
+        sync: false
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: premium-html-to-pdf-kv
+          property: connectionString
+
+keyvalueInstances:
+  - name: premium-html-to-pdf-kv
+    plan: starter
+    maxmemoryPolicy: noeviction
